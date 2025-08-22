@@ -121,7 +121,7 @@
       .invest-section{background-color:#fff;padding:4rem 2rem;text-align:center}
       .invest-section .section-title{font-size:2rem;font-weight:700;color:#2d6a4f;margin-bottom:3rem}
       .invest-grid{display:flex;gap:-.5rem;flex-wrap:nowrap;overflow-x:auto}
-      .invest-card{padding:0 1rem}
+      .invest-card{padding:-4px 1rem}
       .icon-circle{background-color:#2d6a4f;height:64px;width:64px;border-radius:50%;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center}
       .invest-icon{width:28px;height:28px;filter:invert(100%) brightness(200%)}
       .invest-card h3{font-size:1.1rem;font-weight:700;color:#2d6a4f;margin-bottom:.5rem}
@@ -278,8 +278,8 @@
         <div class="features-grid">
           <div class="feature-card">
             <img src="https://unpkg.com/lucide-static/icons/badge-check.svg" alt="100% Legal" class="feature-icon">
-            <h3>100% Legal</h3>
-            <p>Clear titles with all government approvals and documentation</p>
+            <h3>Agricultural Plot</h3>
+            <p>Clear titles with all approvals and documentation</p>
           </div>
           <div class="feature-card">
             <img src="https://unpkg.com/lucide-static/icons/plug.svg" alt="Electricity & Water" class="feature-icon">
@@ -329,7 +329,7 @@
           </div>
           <div class="gallery-card">
             <img src="{{ asset('storage/img/4.jpeg') }}" alt="Road Access" />
-            <div class="gallery-text"><h3>Road Access</h3><p>Well-maintained roads to every plot</p></div>
+            <div class="gallery-text"><h3>Waterfall views</h3><p>Well-maintained roads to every plot</p></div>
           </div>
           <div class="gallery-card">
             <img src="{{ asset('storage/img/5.jpeg') }}" alt="Panoramic Views" />
