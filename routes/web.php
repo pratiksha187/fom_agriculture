@@ -10,6 +10,6 @@ Route::get('/download-brochure', function () {
     return Response::download($file, 'Foothills-Brochure.pdf');
 });
 
-Route::get('/home', function () {
-    return view('home');
-});
+// Route::get('/', function () {
+//     return view('home');
+// });
