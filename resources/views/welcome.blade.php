@@ -397,7 +397,7 @@
           <div class="invest-card">
             <div class="icon-circle"><img src="https://unpkg.com/lucide-static/icons/banknote.svg" alt="Security" class="invest-icon" /></div>
             <h3>Affordable Pricing:</h3>
-            <p>At just Rs. 49 per sqft, owning your dream plot has never been more affordable!</p>
+            <p>At just Rs. 119 per sqft, owning your dream plot has never been more affordable!</p>
           </div>
         </div>
       </div>
