@@ -1,0 +1,39 @@
+<?php
+
+return [
+    'name' => 'Foothills of Mahabaleshwar',
+    'location' => 'Poladpur, Raigad, Maharashtra 402303',
+    'plot_count' => 25,
+    'minimum_area' => 13000,
+    'price_per_sqft' => 399,
+    'phones' => ['9326216153', '8446115797'],
+    'email' => 'foothillsofmahabaleshwar@gmail.com',
+    'sales_email' => 'patilinfrarealtors@gmail.com',
+    'infrastructure' => [
+        ['01', 'Gated entrance', 'A proposed defined entrance for the plotted community.'],
+        ['02', 'Internal roads', 'Planned road access to individual plots.'],
+        ['03', 'Electricity provision', 'Proposed electrical infrastructure for the development.'],
+        ['04', 'Drainage system', 'A planned drainage system for the community.'],
+        ['05', 'Demarcated plots', 'Clearly identified individual land parcels.'],
+        ['06', 'Hill & valley views', 'Scenic natural surroundings and refreshing greenery.'],
+    ],
+    'amenities' => [
+        ['Modern gymnasium', 'A dedicated space for an active lifestyle.'],
+        ['Spa & wellness centre', 'Space to refresh and rejuvenate.'],
+        ['Restaurant & dining', 'A dining experience for family and friends.'],
+        ['Meditation & yoga area', 'A peaceful setting for mindfulness.'],
+        ['Swimming pool', 'A refreshing leisure experience amidst nature.'],
+        ["Children's play area", 'A dedicated space for family recreation.'],
+        ['Banquet & celebration hall', 'A venue for gatherings and special occasions.'],
+        ['Indoor games zone', 'Recreation for all ages.'],
+        ['Outdoor games area', 'Open-air spaces for sports and recreation.'],
+        ['Box cricket arena', 'A cricket experience for friends and families.'],
+    ],
+    'destinations' => [
+        ['Mahabaleshwar', 'A popular hill station with scenic viewpoints.'],
+        ['Pratapgad Fort', 'A historic landmark with panoramic mountain views.'],
+        ['Poladpur', 'Peaceful surroundings and natural landscapes.'],
+        ['Mahad', 'A nearby town with regional connectivity.'],
+        ['Mumbai–Goa Highway (NH-66)', 'A major transport corridor through the Konkan.'],
+    ],
+];
