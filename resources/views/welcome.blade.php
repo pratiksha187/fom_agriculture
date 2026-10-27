@@ -14,6 +14,9 @@
     <link rel="preload" as="image" href="{{ asset('images/project/landscape.webp') }}">
     <link rel="stylesheet" href="{{ asset('css/site.css') }}">
     <link rel="stylesheet" href="{{ asset('css/refined.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/connectivity.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/why-choose.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/faq.css') }}">
     <script src="{{ asset('js/site.js') }}" defer></script>
 </head>
 <body>
@@ -61,15 +64,34 @@
         <div class="about-image"><img src="{{ asset('images/project/hill-view.webp') }}" alt="Forested hills and valley in Poladpur" width="741" height="573" loading="lazy"><span class="photo-label">POLADPUR, THROUGH OUR LENS</span><span class="image-tag">A little closer to nature.</span></div>
         <div><p class="eyebrow">THE FOOTHILLS STORY</p><h2 id="about-title">More than land.<br>A place to <em>reconnect.</em></h2><p class="lead">Discover your dream land in the heart of nature.</p><p>Nestled amidst the green landscapes of Poladpur, near the hill destinations of Mahabaleshwar and Pratapgad, Foothills of Mahabaleshwar is an exclusive hill-view plotting development.</p><p>With 25 spacious plots starting from 13,000 sq. ft., the project brings together natural beauty, privacy and peaceful countryside surroundings, away from crowded urban environments.</p><div class="small-features"><span>Hill & valley views</span><span>Generous plot sizes</span><span>Natural green surroundings</span></div><a class="text-link" href="#layout">Discover the community layout <span>↗</span></a></div>
     </section>
+    <section class="project-overview" id="overview" aria-labelledby="overview-title">
+        <div class="wrap">
+            <div class="overview-grid">
+                <div class="overview-copy">
+                    <p class="overview-label">Project Overview &amp; Highlights</p>
+                    <h2 id="overview-title">A Private Escape in the Heart of Nature</h2>
+                    <p>Foothills of Mahabaleshwar is a limited collection of premium hill-view plots at Poladpur, Raigad. Designed for those who seek a serene lifestyle, a holiday retreat or a long-term investment, this plotted community offers the perfect blend of natural beauty, modern planning and exclusive living.</p>
+                    <a class="overview-download" href="{{ route('brochure') }}">Download Brochure <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></a>
+                </div>
+                <figure class="overview-image">
+                    <img src="{{ asset('images/project/landscape.webp') }}" alt="Lush green hills and valley surrounding the project at Poladpur" width="1518" height="780" loading="lazy">
+                </figure>
+            </div>
+            <ul class="overview-highlights" aria-label="Project highlights">
+                <li><svg viewBox="0 0 64 64" aria-hidden="true"><path d="m7 32-5 24 18-5 23 5 18-24-18 5-23-5Z M20 32l-1 19m24-14v19"/><path d="M36 19c0 8-10 18-10 18S16 27 16 19a10 10 0 1 1 20 0Z"/><circle cx="26" cy="19" r="3"/></svg><span>{{ $project['plot_count'] }} Exclusive<br>Land Plots</span></li>
+                <li><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="46" cy="13" r="6"/><path d="M46 2v2m0 18v2M35 13h-2m26 0h-2M38 5l-2-2m18 18 2 2m-2-18 2-2M9 56l18-32 10 17 7-10 17 25ZM21 35l6 5 6-5m6 5 5 5 5-5M4 15h18a6 6 0 0 0-12-2 4 4 0 0 0-6 2Z"/></svg><span>Premium Hill &amp;<br>Valley Views</span></li>
+                <li><svg viewBox="0 0 64 64" aria-hidden="true"><path d="m35 3-22 33h17l-2 25 23-35H34Z M20 9a26 26 0 0 0-7 43m31 3a26 26 0 0 0 8-43"/></svg><span>Planned Electricity<br>&amp; Drainage</span></li>
+                <li><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 57h48M22 57V28h20v29M18 17h28v11H18Zm5-11h18v11H23ZM28 35h8m-8 8h8m-4 14v-7M8 48V34m-5 5 5-5 5 5m43 9V34m-5 5 5-5 5 5"/><circle cx="9" cy="24" r="4"/><path d="M49 22c3-4 9-4 12 0m-9 4c2-2 4-2 6 0"/></svg><span>{{ count($project['amenities']) }} Proposed<br>Amenities</span></li>
+                <li><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 57 23 12m31 45L41 12M23 57l5-35m13 35-5-35M32 27v6m0 6v6m0 6v6M5 15h54v8H5ZM9 23v16m46-16v16M20 6l-1 4m13-5v5m12-4 1 4"/></svg><span>Easy Highway<br>Access</span></li>
+            </ul>
+        </div>
+    </section>
     <section class="section infrastructure" id="features" aria-labelledby="features-title"><div class="wrap">
         <div class="section-heading"><div><p class="eyebrow">THOUGHTFULLY PLANNED</p><h2 id="features-title">Planned for convenience.<br>Surrounded by <em>nature.</em></h2></div><p>A proposed gated plotted community with planned essential infrastructure and room to enjoy the countryside.</p></div>
         <div class="feature-grid">@foreach($project['infrastructure'] as [$number, $title, $description])<article class="feature-card"><span class="card-number">{{ $number }}</span><h3>{{ $title }}</h3><p>{{ $description }}</p></article>@endforeach</div>
         <p class="project-note"><span aria-hidden="true">ⓘ</span> All infrastructure is proposed and subject to approvals and final project specifications. Farmhouse construction or other development requires applicable permissions.</p>
     </div></section>
-    <section class="section wrap" id="amenities" aria-labelledby="amenities-title">
-        <div class="section-heading"><div><p class="eyebrow">RELAX. RECONNECT. REJUVENATE.</p><h2 id="amenities-title">A little more living.<br>A lot more <em>possibility.</em></h2></div><p>A planned clubhouse for wellness, recreation and time together, set amidst the scenic beauty of Poladpur.</p></div>
-        <div class="amenities-grid"><figure class="amenities-image"><img src="{{ asset('images/project/clubhouse-concept.webp') }}" alt="Clubhouse and lifestyle amenity illustrations from the project profile" width="876" height="1104" loading="lazy"><figcaption>Concept imagery from the client profile. Proposed amenities; subject to final specifications and approvals.</figcaption></figure><div class="amenities-list">@foreach($project['amenities'] as [$title, $description])<article><span>{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span><div><h3>{{ $title }}</h3><p>{{ $description }}</p></div></article>@endforeach</div></div>
-    </section>
+    @include('partials.lifestyle-amenities')
     <section class="nature-pause" aria-label="Countryside living"><div class="wrap"><span class="eyebrow light">LESS RUSH. MORE ROOM.</span><p>Trade the everyday noise<br>for <em>something extraordinary.</em></p><a class="text-link light-link" href="#contact">Experience it for yourself <span>↗</span></a></div></section>
     <section class="section gallery-section" id="gallery" aria-labelledby="gallery-title"><div class="wrap">
         <div class="section-heading"><div><p class="eyebrow">A REAL SENSE OF PLACE</p><h2 id="gallery-title">The views are real.<br>The peace is <em>yours to discover.</em></h2></div><p>Actual location photographs from the project profile. Come and experience the surroundings for yourself.</p></div>
@@ -83,10 +105,13 @@
         <div><p class="eyebrow">THE BIGGER PICTURE</p><h2 id="layout-title">25 exclusive plots.<br>One thoughtfully<br>planned <em>community.</em></h2><p>Explore the arrangement of land parcels, internal access and shared spaces in the layout supplied with the project profile.</p><p class="muted">Layout reproduced from the client profile for reference. Confirm individual plot dimensions, availability and final approved plans with the sales team.</p><div class="actions"><a class="button" href="{{ asset('images/project/layout-plan.webp') }}" target="_blank" rel="noopener">View full layout <span>↗</span></a><a class="text-link" href="{{ route('brochure') }}">Get the profile ↓</a></div></div>
         <figure class="layout-image"><a href="{{ asset('images/project/layout-plan.webp') }}" target="_blank" rel="noopener" aria-label="Open full project layout plan"><img src="{{ asset('images/project/layout-plan.webp') }}" alt="Project layout showing the land parcels, internal roads and shared areas" width="1638" height="1740" loading="lazy"></a><figcaption>Project layout from the client profile · Open to view in detail</figcaption></figure>
     </section>
+    @include('partials.location-connectivity')
     <section class="section location-section" id="location" aria-labelledby="location-title"><div class="wrap location-grid">
         <div><p class="eyebrow light">NATURE, PEACE & CONNECTIVITY</p><h2 id="location-title">Connected to destinations.<br>Surrounded by <em>nature.</em></h2><p>Located in Poladpur, Raigad, amidst the natural beauty of the Western Ghats, with regional connectivity to popular destinations.</p><div class="location-address"><span>PROJECT LOCATION</span><strong>{{ $project['location'] }}</strong><a class="text-link light-link" href="https://www.google.com/maps/search/?api=1&query=Poladpur%2C%20Raigad%2C%20Maharashtra%20402303" target="_blank" rel="noopener">Explore Poladpur on Maps ↗</a></div><p class="location-note">Map link shows the Poladpur area. Ask our team for the exact site pin and directions before your visit.</p></div>
         <div class="destinations">@foreach($project['destinations'] as [$title, $description])<article><span>{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span><div><h3>{{ $title }}</h3><p>{{ $description }}</p></div><span aria-hidden="true">↗</span></article>@endforeach<p class="location-note">Exact distances and travel times depend on the project site and route.</p></div>
     </div></section>
+    @include('partials.why-choose')
+    @include('partials.faq')
     <section class="section wrap contact-grid" id="contact" aria-labelledby="contact-title">
         <div><p class="eyebrow">YOUR PIECE OF NATURE IS WAITING</p><h2 id="contact-title">See the hills.<br>Feel the difference.<br><em>Plan your visit.</em></h2><p>Take the first step towards your own piece of nature. Connect with our team for plot details, current availability and a site visit.</p><div class="contact-details"><div><span>CALL OUR TEAM</span>@foreach($project['phones'] as $phone)<a href="tel:+91{{ $phone }}">+91 {{ $phone }} ↗</a>@endforeach</div><div><span>PROJECT ENQUIRIES</span><a href="mailto:{{ $project['email'] }}">{{ $project['email'] }} ↗</a></div><div><span>SALES OFFICE</span><a href="mailto:{{ $project['sales_email'] }}">{{ $project['sales_email'] }} ↗</a></div><div><span>VISIT US</span><p>{{ $project['location'] }}</p><small>Site visits by appointment. Contact us to arrange a time.</small></div></div></div>
         <div class="enquiry-card"><span class="form-tag">LET'S START A CONVERSATION</span><h3>Arrange a site visit</h3><p>Tell us a little about yourself. Continue to WhatsApp to review and send your enquiry to our team.</p>

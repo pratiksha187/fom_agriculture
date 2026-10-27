@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360" fill="none" stroke="#fff" stroke-opacity=".065" stroke-width="1.5">
+  <defs>
+    <g id="leaf">
+      <path d="M0 95C-65 62-77-25-4-91 63-53 75 33 0 95Z"/>
+      <path d="M-4-91 0 95M-3-65l-29 34M-3-40l-42 38M-2-14l-44 35M-1 12l-34 30M0 39l-23 24M-3-57l28 14M-2-30l42 16M-1-3l44 19M0 24l35 17M0 51l18 10"/>
+    </g>
+  </defs>
+  <use href="#leaf" transform="translate(65 65) rotate(-38)"/>
+  <use href="#leaf" transform="translate(278 105) rotate(36)"/>
+  <use href="#leaf" transform="translate(125 285) rotate(30)"/>
+  <use href="#leaf" transform="translate(345 325) rotate(-40)"/>
+</svg>

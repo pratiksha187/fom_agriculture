@@ -1,4 +1,36 @@
 const menu = document.querySelector('.mobile-nav');
+const connectivity = document.querySelector('.connectivity-carousel');
+if (connectivity) {
+    const track = connectivity.querySelector('.connectivity-cards');
+    const cards = [...track.children];
+    const status = document.querySelector('.connectivity-status');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const visibleCount = () => window.matchMedia('(max-width: 650px)').matches ? 1 : 2;
+    const currentIndex = () => Math.round(track.scrollLeft / (cards[1].offsetLeft - cards[0].offsetLeft));
+    const move = direction => {
+        const last = cards.length - visibleCount();
+        let next = currentIndex() + direction * visibleCount();
+        if (next > last) next = 0;
+        if (next < 0) next = last;
+        track.scrollTo({ left: cards[next].offsetLeft - cards[0].offsetLeft, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
+    };
+    connectivity.querySelectorAll('[data-connectivity-direction]').forEach(button => {
+        button.hidden = false;
+        button.addEventListener('click', () => move(Number(button.dataset.connectivityDirection)));
+    });
+    track.addEventListener('keydown', event => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        move(event.key === 'ArrowRight' ? 1 : -1);
+    });
+    const updateStatus = () => {
+        const first = Math.max(0, Math.min(currentIndex(), cards.length - visibleCount()));
+        status.textContent = `Destinations ${first + 1}–${Math.min(first + visibleCount(), cards.length)} of ${cards.length}`;
+    };
+    track.addEventListener('scroll', updateStatus, { passive: true });
+    window.addEventListener('resize', updateStatus);
+    updateStatus();
+}
 menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
 document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && menu?.open) {

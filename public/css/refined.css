@@ -1,3 +1,27 @@
+/* Display the supplied amenities artwork without rebuilding or cropping it. */
+.amenities-artwork{background:#e4e4e4}
+.amenities-artwork img{display:block;width:100%;max-width:none;height:auto}
+/* Project overview inspired by the supplied project highlights artwork. */
+.project-overview{padding-block:56px 48px;background:#034923 url('../images/project/overview-leaves.svg') center/360px;color:#fff}
+.overview-grid{display:grid;grid-template-columns:.95fr 1.2fr;gap:46px;align-items:center}
+.overview-copy{min-width:0}
+.overview-label{display:inline-block;background:#fff;color:#172b20;padding:10px 22px;border-radius:0 40px 40px 0;font-family:Georgia,"Times New Roman",serif;font-size:20px;font-weight:400;line-height:1.35;margin-bottom:30px}
+.overview-copy h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(27px,2.5vw,36px);font-weight:400;letter-spacing:-.6px;line-height:1.2;margin-bottom:20px;color:#fff}
+.overview-copy>p:not(.overview-label){font-size:18px;line-height:1.6;margin-top:0;color:#f4f8f3}
+.overview-download{display:inline-flex;align-items:center;justify-content:center;gap:16px;margin-top:32px;padding:15px 23px;border-radius:10px;background:#eee;color:#034923;font-size:23px;font-weight:750;line-height:1.3;transition:background .2s}
+.overview-download:hover{background:#fff}
+.overview-download:focus-visible{outline-color:#fff}
+.overview-download svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.overview-image{border:4px solid white;border-radius:22px;overflow:hidden;box-shadow:0 6px 12px #001b1b45}
+.overview-image img{width:100%;height:440px;object-fit:cover}
+.overview-highlights{list-style:none;margin:46px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;text-align:center}
+.overview-highlights li{display:flex;flex-direction:column;align-items:center;gap:18px;min-width:0}
+.overview-highlights svg{width:58px;height:58px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.overview-highlights span{font-size:21px;font-weight:600;line-height:1.3}
+@media(max-width:1100px){.overview-grid{gap:30px}.overview-label{font-size:18px;padding-inline:16px}.overview-download{font-size:21px}.overview-image img{height:460px}.overview-highlights span{font-size:18px}}
+@media(max-width:900px){.overview-grid{grid-template-columns:1fr;gap:32px}.overview-image img{height:auto;aspect-ratio:1.85;object-fit:cover}.overview-copy>p:not(.overview-label){max-width:680px}.overview-highlights{gap:18px}.overview-highlights span{font-size:16px}.overview-highlights svg{width:48px;height:48px}}
+@media(max-width:650px){.project-overview{padding-block:40px}.overview-label{font-size:16px;margin-bottom:24px}.overview-copy h2{font-size:29px;letter-spacing:-.4px}.overview-copy>p:not(.overview-label){font-size:17px}.overview-download{font-size:20px;padding:14px 18px;margin-top:26px}.overview-image{border-width:3px;border-radius:16px}.overview-image img{aspect-ratio:1.35}.overview-highlights{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 16px;margin-top:34px}.overview-highlights li{gap:12px}.overview-highlights li:last-child{grid-column:1 / -1}.overview-highlights span{font-size:17px}}
+
 /* Editorial treatment for the client profile landing page. */
 :root{--forest:#203f32;--forest-deep:#142b23;--cream:#fcfaf5;--paper:#efeee5;--accent:#985039;--gold:#dfcc9f}
 .topbar{padding-block:9px;letter-spacing:.8px}

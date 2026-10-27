@@ -1,0 +1,3 @@
+<section class="amenities-artwork" id="amenities" aria-label="Planned clubhouse and lifestyle amenities">
+    <img src="{{ asset('images/project/lifestyle-amenities.png') }}" alt="Planned Clubhouse &amp; Lifestyle Amenities. A world of leisure, wellness and togetherness: Clubhouse, Restaurant, Kids Play Area, Spa, Yoga &amp; Meditation, Swimming Pool, Outdoor Games, Lounge, Gym, Indoor Games and Box cricket arena." width="7680" height="3644" loading="lazy" decoding="async">
+</section>
