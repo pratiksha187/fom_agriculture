@@ -1,4 +1,34 @@
 const menu = document.querySelector('.mobile-nav');
+const enquiryType = document.querySelector('#enquiry_type');
+if (enquiryType) {
+    const documentInputs = [...document.querySelectorAll('.land-documents input[type="file"]')];
+    const validateDocuments = () => {
+        documentInputs.forEach(input => input.setCustomValidity(''));
+        const selected = documentInputs.filter(input => !input.disabled && input.files.length);
+        selected.forEach(input => {
+            if (input.files[0].size > 2 * 1024 * 1024) {
+                input.setCustomValidity('Please select a file no larger than 2 MB.');
+            }
+        });
+        const totalBytes = selected.reduce((total, input) => total + input.files[0].size, 0);
+        if (totalBytes > 6 * 1024 * 1024) {
+            selected[0].setCustomValidity('Please keep the combined document size within 6 MB.');
+        }
+    };
+    documentInputs.forEach(input => input.addEventListener('change', validateDocuments));
+    const updateEnquiryFields = () => {
+        document.querySelectorAll('[data-enquiry-panel]').forEach(panel => {
+            const active = panel.dataset.enquiryPanel === enquiryType.value;
+            panel.hidden = !active;
+            panel.querySelectorAll('input').forEach(input => { input.disabled = !active; });
+        });
+        document.querySelector('#land_location').required = enquiryType.value === 'land_registration';
+        validateDocuments();
+    };
+    enquiryType.addEventListener('change', updateEnquiryFields);
+    window.addEventListener('pageshow', updateEnquiryFields);
+    updateEnquiryFields();
+}
 const connectivity = document.querySelector('.connectivity-carousel');
 if (connectivity) {
     const track = connectivity.querySelector('.connectivity-cards');

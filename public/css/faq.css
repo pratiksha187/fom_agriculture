@@ -1,15 +1,2 @@
-.faq-section{padding-block:60px;background:#e3e3e3;color:#303030}
-.faq-inner{max-width:1140px}
-.faq-section h2{display:table;max-width:100%;margin:0 auto 34px;padding:5px 14px 7px;border-radius:5px;background:#0f6034;box-shadow:3px 3px 3px #0003;color:#fff;text-align:center;font-family:Georgia,"Times New Roman",serif;font-size:clamp(24px,3vw,38px);font-weight:400;line-height:1.2;letter-spacing:0}
-.faq-list{display:grid;gap:18px}
-.faq-item{background:#fff;border-radius:10px;box-shadow:0 3px 2px #0005;overflow:hidden}
-.faq-item summary{position:relative;display:flex;align-items:center;min-height:72px;padding:20px 70px 20px 36px;list-style:none;cursor:pointer;font-size:18px;font-weight:700;line-height:1.5}
-.faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary::after{content:"+";position:absolute;right:28px;top:50%;transform:translateY(-50%);color:#0f6034;font-size:32px;font-weight:400;line-height:1}
-.faq-item[open] summary::after{content:"\2212"}
-.faq-item summary:hover{background:#f6faf6}
-.faq-item summary:focus-visible{outline:3px solid #0f6034;outline-offset:-4px;border-radius:10px}
-.faq-answer{padding:0 36px 24px;font-size:17px;line-height:1.8;color:#5d5d5d}
-.faq-answer p{margin:0}
-.faq-answer a{color:#0f6034;text-decoration:underline;text-underline-offset:3px;font-weight:600}
-@media(max-width:650px){.faq-section{padding-block:38px}.faq-section h2{font-size:25px;margin-bottom:26px;padding:7px 12px}.faq-list{gap:15px}.faq-item summary{font-size:16px;min-height:68px;padding:18px 50px 18px 20px}.faq-item summary::after{right:18px;font-size:28px}.faq-answer{font-size:16px;padding:0 20px 22px}}
+﻿.faq-inner{max-width:1040px}.faq-list{border-top:1px solid var(--border)}.faq-item{border-bottom:1px solid var(--border)}.faq-item summary{position:relative;display:flex;align-items:center;min-height:78px;padding:22px 60px 22px 0;list-style:none;cursor:pointer;font-size:18px;font-weight:500;line-height:1.5}.faq-item summary::-webkit-details-marker{display:none}.faq-item summary:after{content:"+";position:absolute;right:15px;top:50%;transform:translateY(-50%);color:var(--accent);font-size:30px;font-weight:400;line-height:1}.faq-item[open] summary:after{content:"\2212"}.faq-item summary:hover{color:var(--accent)}.faq-item summary:focus-visible{outline-offset:-3px}.faq-answer{padding:0 60px 24px 0;font-size:16px;line-height:1.8;color:var(--muted)}.faq-answer a{color:var(--forest);text-decoration:underline;text-underline-offset:3px;font-weight:600}
+@media(max-width:650px){.faq-item summary{font-size:17px;padding-right:40px}.faq-item summary:after{right:5px}.faq-answer{padding-right:15px}}

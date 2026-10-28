@@ -9,6 +9,18 @@ return [
     'phones' => ['9326216153', '8446115797'],
     'email' => 'foothillsofmahabaleshwar@gmail.com',
     'sales_email' => 'patilinfrarealtors@gmail.com',
+    'land_documents' => [
+        'satbara' => '7/12 Extract (Satbara)',
+        'eight_a' => '8A Extract',
+        'mutation' => 'Ferfar / Mutation Entries',
+        'sale_deed' => 'Sale Deed / Purchase Deed',
+        'index_ii' => 'Index II',
+        'property_card' => 'Property Card (if applicable)',
+        'survey_map' => 'Land Measurement / Survey Map',
+        'na_order' => 'NA Order (if applicable)',
+        'zone_certificate' => 'Zone Certificate (if available)',
+        'other' => 'Other Supporting Documents',
+    ],
     'infrastructure' => [
         ['01', 'Gated entrance', 'A proposed defined entrance for the plotted community.'],
         ['02', 'Internal roads', 'Planned road access to individual plots.'],

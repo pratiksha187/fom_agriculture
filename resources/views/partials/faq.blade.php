@@ -1,6 +1,6 @@
-<section class="faq-section" id="faq" aria-labelledby="faq-title">
+<section class="section faq-section" id="faq" aria-labelledby="faq-title">
     <div class="wrap faq-inner">
-        <h2 id="faq-title">Frequently Asked Questions (FAQs)</h2>
+        <div class="section-heading"><div><p class="eyebrow">A FEW HELPFUL DETAILS</p><h2 id="faq-title">Before you <em>visit.</em></h2></div><p>Answers to a few common questions about the project and your next steps.</p></div>
         <div class="faq-list">
             <details class="faq-item" name="project-faq">
                 <summary>1. What is the plot size at Foothills of Mahabaleshwar?</summary>
