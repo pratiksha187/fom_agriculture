@@ -24,6 +24,7 @@ Route::prefix('admin')->name('admin.')->middleware(AdminResponseHeaders::class)-
         Route::get('/', [EnquiryController::class, 'index'])->name('enquiries.index');
         Route::get('/enquiries/{enquiry}', [EnquiryController::class, 'show'])->name('enquiries.show');
         Route::patch('/enquiries/{enquiry}', [EnquiryController::class, 'update'])->name('enquiries.update');
+        Route::post('/enquiries/{enquiry}/documents', [EnquiryController::class, 'uploadDocuments'])->middleware('throttle:20,1')->name('documents.store');
         Route::get('/enquiries/{enquiry}/documents/{document}', [EnquiryController::class, 'download'])->name('documents.download');
         Route::get('/account', [AuthController::class, 'editPassword'])->name('account');
         Route::put('/account/password', [AuthController::class, 'updatePassword'])->middleware('throttle:5,1')->name('password.update');

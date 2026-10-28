@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Enquiry;
+use App\Models\EnquiryDocument;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -153,5 +154,100 @@ class AdminPanelTest extends TestCase
         $regular = User::factory()->create(['is_admin' => false]);
         $this->artisan('admin:create', ['email' => $regular->email, '--generate-password' => true])->assertFailed();
         $this->assertFalse($regular->fresh()->is_admin);
+    }
+
+    public function test_admin_can_add_every_document_type_to_one_enquiry_without_replacing_existing_files(): void
+    {
+        Storage::fake('local');
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+        $enquiry = $this->enquiry();
+        $other = $this->enquiry();
+        Storage::disk('local')->put('enquiry-attachments/existing.pdf', 'original document');
+        $existing = $enquiry->documents()->create([
+            'category' => 'satbara', 'label' => 'Original Satbara', 'path' => 'enquiry-attachments/existing.pdf',
+            'original_name' => 'existing.pdf', 'size' => 17,
+        ]);
+        $files = [];
+        foreach (config('project.land_documents') as $key => $label) {
+            $files[$key] = UploadedFile::fake()->create($key.'.pdf', 20, 'application/pdf');
+        }
+        $this->get(route('admin.enquiries.show', $enquiry))->assertOk()->assertSee('Upload documents')->assertSee('documents[satbara]', false);
+        $this->post(route('admin.documents.store', $enquiry), ['documents' => $files])
+            ->assertRedirect(route('admin.enquiries.show', $enquiry))->assertSessionHas('success');
+        $this->assertSame(11, $enquiry->documents()->count());
+        $this->assertSame(0, $other->documents()->count());
+        $this->assertSame('new', $enquiry->fresh()->status);
+        $this->assertSame('original document', Storage::disk('local')->get($existing->path));
+        foreach ($files as $key => $file) {
+            Storage::disk('local')->assertExists('enquiry-attachments/'.$file->hashName());
+            $document = $enquiry->documents()->where('path', 'enquiry-attachments/'.$file->hashName())->firstOrFail();
+            $this->assertSame(config('project.land_documents.'.$key), $document->label);
+            $this->assertSame($key.'.pdf', $document->original_name);
+            $this->get(route('admin.documents.download', [$enquiry, $document]))->assertOk();
+        }
+        $this->post(route('admin.documents.store', $enquiry), ['documents' => [
+            'satbara' => UploadedFile::fake()->image('new-satbara.png'),
+        ]])->assertSessionHas('success');
+        $this->assertSame(12, $enquiry->documents()->count());
+        $this->assertSame(3, $enquiry->documents()->where('category', 'satbara')->count());
+        Storage::disk('local')->assertExists($existing->path);
+    }
+
+    public function test_admin_document_upload_rejects_empty_invalid_and_oversized_batches(): void
+    {
+        Storage::fake('local');
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+        $enquiry = $this->enquiry();
+        $url = route('admin.documents.store', $enquiry);
+        $this->from(route('admin.enquiries.show', $enquiry))->post($url, [])->assertSessionHasErrors('documents');
+        $this->post($url, ['documents' => ['satbara' => null]])->assertSessionHasErrors('documents');
+        $this->post($url, ['documents' => ['unknown' => UploadedFile::fake()->image('extra.png')]])->assertSessionHasErrors('documents');
+        foreach ([UploadedFile::fake()->create('script.php', 1, 'text/x-php'), UploadedFile::fake()->create('large.pdf', 2049, 'application/pdf')] as $file) {
+            $this->post($url, ['documents' => ['satbara' => $file]])->assertSessionHasErrors('documents.satbara');
+        }
+        $files = [];
+        foreach (['satbara', 'eight_a', 'mutation', 'index_ii'] as $key) {
+            $files[$key] = UploadedFile::fake()->create($key.'.pdf', 1800, 'application/pdf');
+        }
+        $this->post($url, ['documents' => $files])->assertSessionHasErrors('documents');
+        $this->assertDatabaseCount('enquiry_documents', 0);
+        $this->assertSame([], Storage::disk('local')->allFiles());
+    }
+
+    public function test_document_upload_requires_admin_access_and_an_existing_enquiry(): void
+    {
+        Storage::fake('local');
+        $enquiry = $this->enquiry();
+        $this->post(route('admin.documents.store', $enquiry), ['documents' => ['satbara' => UploadedFile::fake()->image('doc.png')]])->assertRedirect('/admin/login');
+        $this->actingAs(User::factory()->create(['is_admin' => false]))
+            ->post(route('admin.documents.store', $enquiry), ['documents' => ['satbara' => UploadedFile::fake()->image('doc.png')]])->assertForbidden();
+        $this->actingAs(User::factory()->create(['is_admin' => true]))
+            ->post('/admin/enquiries/99999/documents', ['documents' => ['satbara' => UploadedFile::fake()->image('doc.png')]])->assertNotFound();
+        $this->assertDatabaseCount('enquiry_documents', 0);
+        $this->assertSame([], Storage::disk('local')->allFiles());
+    }
+
+    public function test_failed_admin_document_save_rolls_back_the_whole_batch_and_removes_files(): void
+    {
+        Storage::fake('local');
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+        $enquiry = $this->enquiry();
+        $created = 0;
+        EnquiryDocument::creating(function () use (&$created) {
+            if (++$created === 2) {
+                throw new \RuntimeException('Simulated document save failure');
+            }
+        });
+        try {
+            $this->post(route('admin.documents.store', $enquiry), ['documents' => [
+                'satbara' => UploadedFile::fake()->image('satbara.png'),
+                'eight_a' => UploadedFile::fake()->image('eight-a.png'),
+            ]])->assertSessionHasErrors('documents');
+            $this->assertDatabaseCount('enquiry_documents', 0);
+            $this->assertSame([], Storage::disk('local')->allFiles());
+            $this->assertDatabaseCount('enquiries', 1);
+        } finally {
+            EnquiryDocument::flushEventListeners();
+        }
     }
 }

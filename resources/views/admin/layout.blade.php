@@ -7,6 +7,7 @@
     <title>@yield('title', 'Admin') · Foothills</title>
     <link rel="icon" href="{{ asset('images/foothills-favicon.svg') }}" type="image/svg+xml">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <script src="{{ asset('js/admin.js') }}" defer></script>
 </head>
 <body>
 @if(auth()->user()?->is_admin)

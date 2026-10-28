@@ -19,6 +19,8 @@ Sign in at `/admin/login`. Use **Account** to change the initial password and **
 
 The inbox provides totals, search by name/phone/email/land location/survey number, type and status filters, and pagination. Open an enquiry to view its complete contact details, message, land information and document list. Statuses are New, Contacted and Closed.
 
+To attach documents to a particular enquiry, open it and use **Upload documents** below the document list. All ten land-document categories are available for any enquiry type. Select one or more files and click **Add documents to enquiry**. Accepted formats are PDF, JPG and PNG, up to 2 MB per file and 6 MB per batch. Upload another batch to add more files later. New uploads append to the selected enquiry and keep existing documents, including earlier files in the same category. Uploads do not change the enquiry status or send a WhatsApp message.
+
 Uploads stay on the private local disk. Admin downloads require an authenticated administrator and are scoped to their enquiry. The public links included in WhatsApp retain their existing seven-day expiry; admin downloads remain available after those links expire. Keep the database and `storage/app/private` together in backups. The panel does not automatically delete submissions or uploads.
 
 ## Validation
