@@ -19,23 +19,7 @@
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
-<div class="topbar"><div class="wrap"><span>Poladpur, Raigad · Maharashtra</span><a href="tel:+91{{ $project['phones'][0] }}">Speak to our team <span>+91 {{ $project['phones'][0] }}</span> ↗</a></div></div>
-<header class="site-header">
-    <div class="wrap header-inner">
-        <a class="brand" href="#home" aria-label="Foothills of Mahabaleshwar home">
-            <img class="brand-logo" src="{{ asset('images/foothills-logo.svg') }}" alt="Foothills of Mahabaleshwar" width="144" height="108">
-            
-        </a>
-        <nav class="desktop-nav" aria-label="Main navigation">
-            <a href="#about">Overview</a><a href="#features">Features</a><a href="#amenities">Lifestyle</a><a href="#gallery">Gallery</a><a href="#layout">Layout</a><a href="#location">Location</a>
-        </nav>
-        <a class="button button-small header-cta" href="#contact">Book a site visit <span>↗</span></a>
-        <details class="mobile-nav">
-            <summary aria-label="Toggle navigation">Menu <span>☰</span></summary>
-            <nav aria-label="Mobile navigation"><a href="#about">Overview</a><a href="#features">Features</a><a href="#amenities">Lifestyle</a><a href="#gallery">Gallery</a><a href="#layout">Layout plan</a><a href="#location">Location</a><a href="#contact">Book a site visit</a></nav>
-        </details>
-    </div>
-</header>
+@include('partials.site-header')
 <main id="main">
     <section class="hero" id="home" aria-labelledby="hero-title">
         <img class="hero-image" src="{{ asset('images/project/landscape.webp') }}" alt="Lush green hills and valley at the Poladpur project site" width="1518" height="780" fetchpriority="high">
@@ -94,7 +78,7 @@
     </section>
 </main>
 <dialog class="photo-dialog" aria-label="Project photograph viewer"><button class="photo-close" type="button" aria-label="Close photograph">Close <span aria-hidden="true">×</span></button><img alt=""><p class="photo-caption"></p></dialog>
-<footer class="site-footer"><div class="wrap"><div class="footer-top"><div><a class="brand footer-brand" href="#home"><img class="brand-logo" src="{{ asset('images/foothills-logo.svg') }}" alt="Foothills of Mahabaleshwar" width="144" height="108"></a><p>Own land. Embrace nature. Experience luxury.</p></div><nav aria-label="Footer navigation"><a href="#about">Overview</a><a href="#layout">Layout plan</a><a href="#amenities">Clubhouse & lifestyle</a><a href="{{ route('brochure') }}">Download project profile ↓</a></nav><div><span class="footer-label">FIND YOUR OWN PIECE OF NATURE</span><a class="footer-phone" href="tel:+91{{ $project['phones'][0] }}">+91 {{ $project['phones'][0] }} ↗</a><p>Poladpur, Raigad, Maharashtra</p></div></div><div class="footer-bottom"><span>© {{ date('Y') }} Foothills of Mahabaleshwar. All rights reserved.</span><a href="#home">Back to top ↑</a></div></div></footer>
+@include('partials.site-footer')
 <div class="mobile-contact"><a href="tel:+91{{ $project['phones'][0] }}">Call the team ↗</a><a href="#contact">Book a site visit ↗</a></div>
 </body>
 </html>

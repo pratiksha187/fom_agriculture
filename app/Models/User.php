@@ -9,6 +9,11 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    public function channelPartner(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ChannelPartner::class);
+    }
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 

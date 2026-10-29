@@ -15,6 +15,7 @@
         <aside class="sidebar">
             <a class="admin-brand" href="{{ route('admin.enquiries.index') }}"><img src="{{ asset('images/foothills-logo.svg') }}" width="144" height="108" alt="Foothills of Mahabaleshwar"><span>ADMIN WORKSPACE</span></a>
             <nav aria-label="Admin navigation">
+                <a class="{{ request()->routeIs('admin.partners.*') ? 'active' : '' }}" href="{{ route('admin.partners.index') }}">Channel partners <span>&#8599;</span></a>
                 <a class="{{ request()->routeIs('admin.enquiries.*') ? 'active' : '' }}" href="{{ route('admin.enquiries.index') }}">Enquiry inbox <span>↗</span></a>
                 <a class="{{ request()->routeIs('admin.account') ? 'active' : '' }}" href="{{ route('admin.account') }}">Account <span>↗</span></a>
                 <a href="{{ route('home') }}" target="_blank" rel="noopener">View website <span>↗</span></a>
