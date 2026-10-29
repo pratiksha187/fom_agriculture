@@ -12,7 +12,7 @@
             <div><dt>Enquiry type</dt><dd>{{ \App\Models\Enquiry::TYPES[$enquiry->enquiry_type] }}</dd></div>
             @if($enquiry->enquiry_type === 'land_registration')<div><dt>Land location</dt><dd>{{ $enquiry->land_location }}</dd></div><div><dt>Survey / Gat number</dt><dd>{{ $enquiry->survey_number ?: 'Not provided' }}</dd></div>@endif
         </dl><div class="message-block"><h3>Message / requirements</h3><p>{{ $enquiry->message ?: 'No message provided.' }}</p></div></section>
-        <section class="panel detail-panel"><div class="document-heading"><h2>Uploaded documents</h2><span>{{ $enquiry->documents->count() }} {{ $enquiry->documents->count() === 1 ? 'file' : 'files' }}</span></div>
+        <!-- <section class="panel detail-panel"><div class="document-heading"><h2>Uploaded documents</h2><span>{{ $enquiry->documents->count() }} {{ $enquiry->documents->count() === 1 ? 'file' : 'files' }}</span></div>
             @forelse($enquiry->documents as $document)
                 <article class="document-row"><div><h3>{{ $document->label }}</h3><p>{{ $document->original_name }} <span>· {{ number_format($document->size / 1024, 1) }} KB</span></p></div><a class="button button-outline" href="{{ route('admin.documents.download', [$enquiry, $document]) }}">Download ↓</a></article>
             @empty<p class="muted">No documents have been added to this enquiry yet.</p>@endforelse
@@ -35,7 +35,7 @@
                 </div>
                 <div class="upload-submit"><button class="button" type="submit">Add documents to enquiry ↑</button><span>Files are stored privately and will appear in the document list above.</span></div>
             </form>
-        </section>
+        </section> -->
     </div>
     <aside class="panel status-panel"><p class="eyebrow">FOLLOW-UP</p><h2>Enquiry status</h2><p class="muted">Keep track of your conversation with this visitor.</p><form class="stack" action="{{ route('admin.enquiries.update', $enquiry) }}" method="post">@csrf @method('PATCH')<div><label for="status">Status</label><select id="status" name="status">@foreach(\App\Models\Enquiry::STATUSES as $value => $label)<option value="{{ $value }}" @selected(old('status', $enquiry->status) === $value)>{{ $label }}</option>@endforeach</select></div><button class="button" type="submit">Save status ↗</button></form><p class="status-note">This records the website submission. WhatsApp delivery and site-visit confirmation are handled separately.</p></aside>
 </div>
