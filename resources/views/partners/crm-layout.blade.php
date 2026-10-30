@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/site.css') }}">
     <link rel="stylesheet" href="{{ asset('css/partners.css') }}">
     <link rel="stylesheet" href="{{ asset('css/partner-crm.css') }}">
+    @stack('styles')
     <script src="{{ asset('js/site.js') }}" defer></script>
     <script src="{{ asset('js/partners.js') }}" defer></script>
 </head>
@@ -28,8 +29,12 @@
         @endforeach
     </nav>
     <main id="main">
+        @hasSection('workspace-intro')
+            @yield('workspace-intro')
+        @else
         <div class="crm-welcome"><div><h1>Welcome back, {{ \Illuminate\Support\Str::title(\Illuminate\Support\Str::before($partner->user->name, ' ')) }}!</h1><p>Partner ID: {{ $partner->partner_code }}</p><p>Manage your buyer enquiries and project site visits.</p></div>
         @if(request()->routeIs('partners.leads.create'))<a class="crm-primary" href="{{ route('partners.leads.index') }}">&times; Close</a>@else<a class="crm-primary" href="{{ route('partners.leads.create') }}">&plus; Add Lead</a>@endif</div>
+        @endif
         @if(session('success'))<p class="success" role="status">{{ session('success') }}</p>@endif
         @if($errors->any())<div class="errors" role="alert" tabindex="-1"><strong>Please check your details.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
         @yield('content')

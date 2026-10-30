@@ -6,7 +6,7 @@ Visit Scheduled requires a future date and time in Asia/Kolkata (IST). Dates are
 
 New submissions start at New Lead and receive a history entry. Changes record the previous and new progress, actor, timestamp, appointment time when relevant, and optional remarks. Repeated identical saves do not add an entry unless remarks are supplied. History is paginated, with newest updates first. Existing lead records keep their derived progress; their history begins with the first update after deployment. Earlier events are not reconstructed.
 
-Admin review remains separate from sales progress. Admin rejection, visit updates, visit requests, and official booking changes also update progress history. Marking a lead Booked does not create an official booking, commission, payment, or site-team verification. The Booked Leads dashboard total includes partner-marked leads; official booking and commission pages continue to show the team's records.
+Admin review remains separate from sales progress. Admin rejection, visit updates, visit requests, and official booking changes also update progress history. Marking a lead Booked does not create an official booking, commission, payment, or site-team verification. The Booked Leads dashboard total includes partner-marked leads. The Bookings tab includes those leads immediately, with a note when project-team booking details are pending. Each lead appears once, with its official booking details when available; cancelled official records remain visible. The Commissions page continues to show the team's records.
 
 ## Deployment
 

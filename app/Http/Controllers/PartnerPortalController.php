@@ -107,7 +107,11 @@ class PartnerPortalController extends Controller
 
     public function bookings(Request $request)
     {
-        return view('partners.bookings', $this->context($request) + ['bookings' => $this->bookingsQuery($request)->with('lead')->latest()->paginate(10)]);
+        $leads = $request->user()->channelPartner->leads()
+            ->where(fn ($query) => $query->where('progress_status', 'booked')->orWhereHas('booking'))
+            ->with('booking')->latest('updated_at')->orderByDesc('id')->paginate(10);
+
+        return view('partners.bookings', $this->context($request) + ['bookingLeads' => $leads]);
     }
 
     public function commissions(Request $request)

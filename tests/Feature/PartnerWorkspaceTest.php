@@ -182,7 +182,7 @@ class PartnerWorkspaceTest extends TestCase
         $this->actingAs($partner->user);
         $this->get('/partners/dashboard')->assertOk()->assertSee('Recent Buyer Leads')->assertSee('Visits Completed')
             ->assertDontSee('id="submit-lead"', false)->assertDontSee('id="security"', false)->assertDontSee('Commission Tracking');
-        $this->get('/partners/leads')->assertOk()->assertSee('My Buyer Leads')->assertSee('View Details')->assertDontSee('Submit New Buyer Lead');
+        $this->get('/partners/leads')->assertOk()->assertSee('My Buyer Leads')->assertSee(route('partners.leads.show', $lead))->assertDontSee('Submit New Buyer Lead');
         $this->get('/partners/leads/create')->assertOk()->assertSee('Submit New Buyer Lead')->assertSee('name="preferred_visit_date"', false)->assertDontSee('Recent Buyer Leads');
         $this->get('/partners/visits')->assertOk()->assertSee('Site Visit Tracking')->assertDontSee('Submit New Buyer Lead');
         $this->get('/partners/bookings')->assertOk()->assertSee('Booking Tracking');

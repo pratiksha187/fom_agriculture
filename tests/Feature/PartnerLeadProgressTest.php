@@ -160,4 +160,36 @@ class PartnerLeadProgressTest extends TestCase
         $this->get('/partners/leads?status=rejected')->assertDontSee('Progress Buyer');
         $this->get(route('partners.leads.show', $lead))->assertSee('Initial decision')->assertSee($admin->name);
     }
+
+    public function test_bookings_tab_shows_partner_marked_leads_and_removes_them_when_progress_changes(): void
+    {
+        $owner = $this->partner();
+        $lead = $this->submitLead($owner);
+        $this->patch(route('partners.leads.status', $lead), ['status' => 'booked'])->assertSessionHasNoErrors();
+        $other = $this->submitLead($this->partner());
+        $other->forceFill(['buyer_name' => 'Other Private Buyer', 'progress_status' => 'booked'])->save();
+        $other->booking()->create(['reference' => 'OTHER-1', 'plot' => 'PRIVATE', 'sale_amount' => 200000, 'status' => 'confirmed']);
+
+        $this->actingAs($owner->user)->get('/partners/bookings')->assertOk()
+            ->assertSee('Progress Buyer')->assertSee('Booking details awaiting the project team.')
+            ->assertDontSee('No bookings recorded yet')->assertDontSee('Other Private Buyer')->assertDontSee('OTHER-1')
+            ->assertViewHas('bookingLeads', fn ($leads) => $leads->total() === 1 && $leads->first()->id === $lead->id);
+        $this->assertFalse($lead->booking()->exists());
+        $this->patch(route('partners.leads.status', $lead), ['status' => 'rejected'])->assertSessionHasNoErrors();
+        $this->get('/partners/bookings')->assertOk()->assertSee('No bookings recorded yet')->assertDontSee('Progress Buyer');
+    }
+
+    public function test_bookings_tab_shows_one_card_with_official_details_for_a_partner_marked_booking(): void
+    {
+        $lead = $this->submitLead($this->partner());
+        $this->patch(route('partners.leads.status', $lead), ['status' => 'booked'])->assertSessionHasNoErrors();
+        $booking = $lead->booking()->create(['reference' => 'BOOK-DETAILS-1', 'plot' => 'A-12', 'sale_amount' => 250000, 'status' => 'confirmed']);
+
+        $this->get('/partners/bookings')->assertOk()->assertSee('BOOK-DETAILS-1')->assertSee('A-12')->assertSee('250,000.00')
+            ->assertSee('Confirmed')->assertDontSee('Booking details awaiting the project team.')
+            ->assertViewHas('bookingLeads', fn ($leads) => $leads->total() === 1);
+        $lead->forceFill(['progress_status' => null])->save();
+        $booking->update(['status' => 'cancelled']);
+        $this->get('/partners/bookings')->assertOk()->assertSee('Cancelled')->assertSee('BOOK-DETAILS-1');
+    }
 }
