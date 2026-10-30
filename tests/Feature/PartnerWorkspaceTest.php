@@ -45,6 +45,22 @@ class PartnerWorkspaceTest extends TestCase
             ->get('/admin/partners')->assertOk()->assertSee($partner->user->name)->assertSee('Not available');
     }
 
+    public function test_admin_can_view_partner_list_and_details_without_a_linked_user(): void
+    {
+        $partner = $this->partner();
+        $validPartner = $this->partner();
+        // Simulate a legacy orphan in the isolated SQLite transaction.
+        \Illuminate\Support\Facades\DB::statement('PRAGMA defer_foreign_keys = ON');
+        \Illuminate\Support\Facades\DB::table('channel_partners')->where('id', $partner->id)->update(['user_id' => 999999]);
+
+        $this->actingAs(User::factory()->create(['is_admin' => true]))
+            ->get('/admin/partners')->assertOk()->assertSee('User account unavailable')
+            ->assertSee('Email unavailable')->assertSee($partner->mobile)->assertSee($validPartner->user->email);
+        $this->get(route('admin.partners.show', $partner))->assertOk()
+            ->assertSee('User account unavailable')->assertSee('no linked user account')->assertSee($partner->mobile);
+        $this->assertDatabaseHas('channel_partners', ['id' => $partner->id, 'user_id' => 999999]);
+    }
+
     public function test_admin_partner_list_handles_registrations_before_the_status_migration(): void
     {
         $partner = $this->partner();
