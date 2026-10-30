@@ -34,6 +34,29 @@ class PartnerWorkspaceTest extends TestCase
         return ['reference' => 'FOM-BOOK-101', 'plot' => 'A-12', 'sale_amount' => '5000000.00', 'status' => 'confirmed', 'commission_amount' => '50000.00', 'commission_status' => 'eligible'];
     }
 
+    public function test_admin_partner_list_handles_legacy_registration_values(): void
+    {
+        $partner = $this->partner();
+        $partner->forceFill([
+            'partner_type' => 'legacy', 'experience' => 'legacy', 'status' => 'legacy', 'created_at' => null,
+        ])->save();
+
+        $this->actingAs(User::factory()->create(['is_admin' => true]))
+            ->get('/admin/partners')->assertOk()->assertSee($partner->user->name)->assertSee('Not available');
+    }
+
+    public function test_admin_partner_list_handles_registrations_before_the_status_migration(): void
+    {
+        $partner = $this->partner();
+        \Illuminate\Support\Facades\Schema::table('channel_partners', function (\Illuminate\Database\Schema\Blueprint $table) {
+            $table->dropIndex(['status']);
+            $table->dropColumn('status');
+        });
+
+        $this->actingAs(User::factory()->create(['is_admin' => true]))
+            ->get('/admin/partners')->assertOk()->assertSee($partner->user->name)->assertSee('Not available');
+    }
+
     public function test_admin_approval_is_required_and_suspension_blocks_existing_sessions(): void
     {
         $partner = $this->partner('pending');
