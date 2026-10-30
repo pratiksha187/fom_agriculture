@@ -45,6 +45,24 @@ class PartnerWorkspaceTest extends TestCase
             ->get('/admin/partners')->assertOk()->assertSee($partner->user->name)->assertSee('Not available');
     }
 
+    public function test_admin_partner_filters_combine_search_and_status_with_global_summary_counts(): void
+    {
+        $pending = $this->partner('pending');
+        $pending->user->update(['name' => 'Awaiting Partner', 'email' => 'awaiting@example.com']);
+        $approved = $this->partner('approved');
+        $approved->user->update(['name' => 'Approved Partner']);
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+
+        $this->get('/admin/partners?q=awaiting@example.com&status=pending')->assertOk()
+            ->assertSee('Awaiting Partner')->assertDontSee('Approved Partner')
+            ->assertViewHas('partners', fn ($rows) => $rows->total() === 1 && $rows->first()->id === $pending->id)
+            ->assertViewHas('counts', fn ($counts) => $counts['total'] === 2 && $counts['pending'] === 1 && $counts['approved'] === 1);
+        $this->get('/admin/partners?q=awaiting@example.com&status=approved')->assertOk()->assertSee('No matching partners')
+            ->assertViewHas('partners', fn ($rows) => $rows->total() === 0);
+        $this->get('/admin/partners?q='.$approved->mobile)->assertOk()->assertSee('Approved Partner')->assertDontSee('Awaiting Partner');
+        $this->get('/admin/partners?status=invalid')->assertSessionHasErrors('status');
+    }
+
     public function test_admin_can_view_partner_list_and_details_without_a_linked_user(): void
     {
         $partner = $this->partner();

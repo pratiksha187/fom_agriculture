@@ -1,3 +1,24 @@
+const menuButton = document.querySelector('[data-admin-menu]');
+if (menuButton) {
+    const sidebar = menuButton.closest('.sidebar');
+    const navigation = document.getElementById(menuButton.getAttribute('aria-controls'));
+    const mobile = window.matchMedia('(max-width: 900px)');
+    const setMenu = open => {
+        navigation.hidden = !open;
+        sidebar.classList.toggle('menu-open', open);
+        menuButton.setAttribute('aria-expanded', String(open));
+    };
+    menuButton.addEventListener('click', () => setMenu(navigation.hidden));
+    mobile.addEventListener('change', () => setMenu(!mobile.matches));
+    sidebar.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && mobile.matches) {
+            setMenu(false);
+            menuButton.focus();
+        }
+    });
+    setMenu(!mobile.matches);
+}
+
 const uploadForm = document.querySelector('.admin-document-form');
 if (uploadForm) {
     const inputs = [...uploadForm.querySelectorAll('input[type="file"]')];

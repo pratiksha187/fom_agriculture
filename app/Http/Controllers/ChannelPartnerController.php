@@ -8,6 +8,7 @@ use App\Support\PartnerTerms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
@@ -95,8 +96,31 @@ class ChannelPartnerController extends Controller
         return redirect()->route('partners.security')->with('success', 'Your password has been updated.');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.partners.index', ['partners' => ChannelPartner::with('user')->latest()->paginate(20)]);
+        $filters = $request->validate([
+            'q' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', Rule::in(array_keys(ChannelPartner::STATUSES))],
+        ]);
+        $query = ChannelPartner::with('user');
+        if ($search = trim($filters['q'] ?? '')) {
+            $query->where(function ($query) use ($search) {
+                $term = '%'.$search.'%';
+                $query->where('mobile', 'like', $term)->orWhere('city', 'like', $term)
+                    ->orWhere('agency_name', 'like', $term)
+                    ->orWhereHas('user', fn ($user) => $user->where('name', 'like', $term)->orWhere('email', 'like', $term));
+            });
+        }
+        $hasStatus = Schema::hasColumn('channel_partners', 'status');
+        if (! empty($filters['status'])) {
+            $hasStatus ? $query->where('status', $filters['status']) : $query->whereRaw('1 = 0');
+        }
+        $statuses = $hasStatus ? ChannelPartner::selectRaw('status, COUNT(*) as total')->groupBy('status')->pluck('total', 'status') : collect();
+
+        return view('admin.partners.index', [
+            'partners' => $query->latest()->orderByDesc('id')->paginate(20)->withQueryString(),
+            'filters' => $filters,
+            'counts' => ['total' => ChannelPartner::count(), 'pending' => $statuses['pending'] ?? 0, 'approved' => $statuses['approved'] ?? 0, 'suspended' => $statuses['suspended'] ?? 0],
+        ]);
     }
 }

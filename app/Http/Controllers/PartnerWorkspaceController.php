@@ -111,7 +111,7 @@ class PartnerWorkspaceController extends Controller
 
     public function show(ChannelPartner $partner)
     {
-        return view('admin.partners.show', ['partner' => $partner->load('user'), 'leads' => $partner->leads()->with(['visits', 'booking'])->latest()->paginate(10)]);
+        return view('admin.partners.show', ['partner' => $partner->load('user'), 'leads' => $partner->leads()->with(['visits', 'latestVisit', 'booking'])->latest()->paginate(10)]);
     }
 
     public function updatePartner(Request $request, ChannelPartner $partner)
