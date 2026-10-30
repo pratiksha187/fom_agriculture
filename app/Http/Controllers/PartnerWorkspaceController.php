@@ -8,6 +8,7 @@ use App\Models\PartnerLead;
 use App\Models\PartnerSiteVisit;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -28,9 +29,59 @@ class PartnerWorkspaceController extends Controller
         $duplicate = PartnerLead::where('phone', $details['phone'])->exists();
         $lead = $partner->leads()->make(collect($details)->except('buyer_consent')->all() + ['buyer_consent_at' => now()]);
         $lead->status = $duplicate ? 'duplicate_review' : 'new';
-        $lead->save();
+        DB::transaction(function () use ($lead, $request) {
+            $lead->save();
+            $lead->statusHistory()->create(['changed_by' => $request->user()->id, 'to_status' => 'new']);
+        });
 
         return redirect()->route('partners.leads.index')->with('success', 'Buyer lead submitted for review.');
+    }
+
+    public function updateProgress(Request $request, PartnerLead $lead)
+    {
+        abort_unless($lead->channel_partner_id === $request->user()->channelPartner->id, 404);
+        $details = $request->validate([
+            'status' => ['required', Rule::in(array_keys(PartnerLead::PROGRESS_STATUSES))],
+            'scheduled_at' => ['exclude_unless:status,scheduled', 'required', 'date_format:Y-m-d\TH:i'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+        ]);
+        $scheduled = isset($details['scheduled_at']) ? Carbon::createFromFormat('!Y-m-d\TH:i', $details['scheduled_at'], 'Asia/Kolkata')->utc() : null;
+        if ($scheduled?->isPast()) {
+            throw ValidationException::withMessages(['scheduled_at' => 'Please choose a future visit date and time (IST).']);
+        }
+
+        DB::transaction(function () use ($lead, $request, $details, $scheduled) {
+            $lead = PartnerLead::whereKey($lead->id)->lockForUpdate()->firstOrFail();
+            $before = $lead->pipeline_status;
+            $visit = $lead->latestVisit;
+            if ($details['status'] === 'completed' && (! $visit || $visit->scheduled_at->isFuture() || in_array($visit->status, ['cancelled', 'missed']))) {
+                throw ValidationException::withMessages(['status' => 'Schedule a visit first. A future or cancelled visit cannot be marked completed.']);
+            }
+            $rescheduled = $scheduled && (! $visit || ! $scheduled->equalTo($visit->scheduled_at) || ! in_array($visit->status, ['scheduled', 'requested']));
+            if ($details['status'] === 'scheduled') {
+                if (! $visit || ! in_array($visit->status, ['requested', 'scheduled'])) {
+                    $visit = $lead->visits()->make();
+                }
+                $visit->forceFill(['scheduled_at' => $scheduled, 'status' => 'scheduled', 'verified_by' => null, 'notes' => $details['notes'] ?? null])->save();
+            } elseif ($details['status'] === 'completed') {
+                // A partner's update does not grant site-team verification.
+                $visit->forceFill(['status' => 'completed'])->save();
+            } elseif ($visit && in_array($visit->status, ['requested', 'scheduled'])) {
+                $visit->forceFill(['status' => 'cancelled'])->save();
+            }
+            $lead->progress_status = $details['status'];
+            $lead->save();
+            if ($before !== $details['status'] || $rescheduled || filled($details['notes'] ?? null)) {
+                $lead->statusHistory()->create([
+                    'changed_by' => $request->user()->id, 'from_status' => $before,
+                    'to_status' => $details['status'],
+                    'visit_at' => in_array($details['status'], ['scheduled', 'completed']) ? $visit?->scheduled_at : null,
+                    'notes' => $details['notes'] ?? null,
+                ]);
+            }
+        });
+
+        return redirect()->route('partners.leads.show', $lead)->with('success', 'Lead progress updated.');
     }
 
     public function requestVisit(Request $request, PartnerLead $lead)
@@ -47,7 +98,13 @@ class PartnerWorkspaceController extends Controller
         if ($lead->visits()->whereIn('status', ['requested', 'scheduled'])->exists()) {
             throw ValidationException::withMessages(['visit' => 'This buyer already has an active visit. Contact the team to reschedule it.']);
         }
-        $lead->visits()->create(['scheduled_at' => $scheduled, 'notes' => $details['notes'] ?? null]);
+        DB::transaction(function () use ($lead, $scheduled, $details, $request) {
+            $before = $lead->pipeline_status;
+            $lead->visits()->create(['scheduled_at' => $scheduled, 'notes' => $details['notes'] ?? null]);
+            $lead->progress_status = null;
+            $lead->save();
+            $this->recordProgress($lead, $before, $request, $details['notes'] ?? null, true);
+        });
 
         return redirect()->route('partners.visits.index')->with('success', 'Site visit requested. Our team will confirm the appointment.');
     }
@@ -72,8 +129,16 @@ class PartnerWorkspaceController extends Controller
     {
         abort_unless($lead->channel_partner_id === $partner->id, 404);
         $details = $request->validate(['status' => ['required', Rule::in(array_keys(PartnerLead::STATUSES))]]);
-        $lead->status = $details['status'];
-        $lead->save();
+        DB::transaction(function () use ($lead, $details, $request) {
+            $before = $lead->pipeline_status;
+            $lead->status = $details['status'];
+            if ($details['status'] === 'rejected') {
+                $lead->progress_status = 'rejected';
+                $lead->visits()->whereIn('status', ['requested', 'scheduled'])->update(['status' => 'cancelled']);
+            }
+            $lead->save();
+            $this->recordProgress($lead, $before, $request);
+        });
 
         return back()->with('success', 'Lead status updated.');
     }
@@ -93,7 +158,17 @@ class PartnerWorkspaceController extends Controller
         $visit->fill(['scheduled_at' => $scheduled, 'notes' => $details['notes'] ?? null]);
         $visit->status = $details['status'];
         $visit->verified_by = $details['status'] === 'completed' ? $request->user()->id : null;
-        $visit->save();
+        DB::transaction(function () use ($visit, $request) {
+            $lead = $visit->lead;
+            $before = $lead->pipeline_status;
+            $visit->save();
+            // Only the latest appointment determines the lead's current progress.
+            if ($lead->latestVisit?->id === $visit->id) {
+                $lead->progress_status = null;
+                $lead->save();
+            }
+            $this->recordProgress($lead, $before, $request, $visit->notes, true);
+        });
 
         return back()->with('success', 'Visit updated. Dates are shown in IST.');
     }
@@ -125,8 +200,26 @@ class PartnerWorkspaceController extends Controller
             throw ValidationException::withMessages(['paid_at' => 'The payment date cannot be in the future.']);
         }
         $details['payment_reference'] = $details['commission_status'] === 'paid' ? $details['payment_reference'] : null;
-        $lead->booking()->updateOrCreate([], $details);
+        DB::transaction(function () use ($lead, $details, $request) {
+            $before = $lead->pipeline_status;
+            $lead->booking()->updateOrCreate([], $details);
+            $lead->progress_status = null;
+            $lead->save();
+            $this->recordProgress($lead, $before, $request);
+        });
 
         return back()->with('success', 'Booking and commission record saved.');
+    }
+
+    private function recordProgress(PartnerLead $lead, string $before, Request $request, ?string $notes = null, bool $force = false): void
+    {
+        $lead->refresh();
+        if ($force || $before !== $lead->pipeline_status) {
+            $lead->statusHistory()->create([
+                'changed_by' => $request->user()->id, 'from_status' => $before,
+                'to_status' => $lead->pipeline_status,
+                'visit_at' => $lead->latestVisit?->scheduled_at, 'notes' => $notes,
+            ]);
+        }
     }
 }

@@ -20,6 +20,7 @@ class PartnerMigrationRecoveryTest extends TestCase
             'city' => 'Mumbai', 'experience' => '1_to_3', 'terms_accepted_at' => now(),
         ]);
         foreach ([
+            '2026_10_30_000001_add_partner_lead_progress',
             '2026_10_29_000004_add_preferred_partner_visit_date',
             '2026_10_29_000003_create_partner_workspace_tables',
             '2026_10_29_000002_add_partner_terms_version',

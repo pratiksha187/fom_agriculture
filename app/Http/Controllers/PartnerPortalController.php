@@ -27,7 +27,7 @@ class PartnerPortalController extends Controller
 
     private function filteredLeads(Request $request)
     {
-        $filters = $request->validate(['q' => ['nullable', 'string', 'max:100'], 'status' => ['nullable', Rule::in(['all', 'new', 'scheduled', 'completed', 'missed', 'booked'])]]);
+        $filters = $request->validate(['q' => ['nullable', 'string', 'max:100'], 'status' => ['nullable', Rule::in(['all', 'new', 'scheduled', 'completed', 'missed', 'booked', 'rejected'])]]);
         $query = $request->user()->channelPartner->leads()->with(['latestVisit', 'booking']);
         if ($search = trim($filters['q'] ?? '')) {
             $query->where(function ($query) use ($search) {
@@ -38,15 +38,27 @@ class PartnerPortalController extends Controller
             });
         }
         $status = $filters['status'] ?? 'all';
-        if ($status === 'booked') {
-            $query->whereHas('booking', fn ($query) => $query->where('status', '!=', 'cancelled'));
-        } elseif ($status !== 'all') {
-            $query->whereDoesntHave('booking', fn ($query) => $query->where('status', '!=', 'cancelled'));
-            if ($status === 'new') {
-                $query->where('status', 'new')->whereDoesntHave('latestVisit', fn ($query) => $query->whereIn('status', ['requested', 'scheduled', 'completed', 'missed']));
-            } else {
-                $query->whereHas('latestVisit', fn ($query) => $query->whereIn('status', $status === 'scheduled' ? ['requested', 'scheduled'] : [$status]));
-            }
+        if ($status !== 'all') {
+            $query->where(function ($query) use ($status) {
+                $query->where('progress_status', $status)->orWhere(function ($query) use ($status) {
+                    $query->whereNull('progress_status');
+                    if ($status === 'booked') {
+                        $query->whereHas('booking', fn ($booking) => $booking->where('status', '!=', 'cancelled'));
+                    } else {
+                        $query->whereDoesntHave('booking', fn ($booking) => $booking->where('status', '!=', 'cancelled'));
+                        if ($status === 'rejected') {
+                            $query->where('status', 'rejected');
+                        } else {
+                            $query->where('status', '!=', 'rejected');
+                            if ($status === 'new') {
+                                $query->whereDoesntHave('latestVisit', fn ($visit) => $visit->whereIn('status', ['requested', 'scheduled', 'completed', 'missed']));
+                            } else {
+                                $query->whereHas('latestVisit', fn ($visit) => $visit->whereIn('status', $status === 'scheduled' ? ['requested', 'scheduled'] : [$status]));
+                            }
+                        }
+                    }
+                });
+            });
         }
 
         return $query->latest()->paginate(10)->withQueryString();
@@ -64,7 +76,9 @@ class PartnerPortalController extends Controller
                 'leads' => $request->user()->channelPartner->leads()->count(),
                 'visits' => (clone $visits)->whereIn('status', ['scheduled', 'requested'])->where('scheduled_at', '>=', now())->count(),
                 'completed' => (clone $visits)->where('status', 'completed')->count(),
-                'bookings' => (clone $bookings)->where('status', '!=', 'cancelled')->count(),
+            'bookings' => $request->user()->channelPartner->leads()->where(function ($query) {
+                $query->where('progress_status', 'booked')->orWhere(fn ($query) => $query->whereNull('progress_status')->whereHas('booking', fn ($booking) => $booking->where('status', '!=', 'cancelled')));
+            })->count(),
             ],
         ]);
     }
@@ -83,7 +97,7 @@ class PartnerPortalController extends Controller
     {
         abort_unless($lead->channel_partner_id === $request->user()->channelPartner->id, 404);
 
-        return view('partners.lead-show', $this->context($request) + ['lead' => $lead->load(['visits' => fn ($query) => $query->latest('scheduled_at'), 'latestVisit', 'booking'])]);
+        return view('partners.lead-show', $this->context($request) + ['lead' => $lead->load(['visits' => fn ($query) => $query->latest('scheduled_at'), 'latestVisit', 'booking']), 'history' => $lead->statusHistory()->with('actor')->latest('id')->paginate(15)]);
     }
 
     public function visits(Request $request)

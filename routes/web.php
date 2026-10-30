@@ -29,6 +29,7 @@ Route::prefix('partners')->name('partners.')->middleware(AdminResponseHeaders::c
             Route::get('/'.$page, [PartnerPortalController::class, 'account'])->name($page);
         }
         Route::post('/leads', [PartnerWorkspaceController::class, 'storeLead'])->middleware('throttle:20,1,partner-leads')->name('leads.store');
+        Route::patch('/leads/{lead}/status', [PartnerWorkspaceController::class, 'updateProgress'])->middleware('throttle:30,1,partner-lead-status')->name('leads.status');
         Route::post('/leads/{lead}/visits', [PartnerWorkspaceController::class, 'requestVisit'])->middleware('throttle:10,1,partner-visits')->name('visits.store');
         Route::put('/password', [ChannelPartnerController::class, 'updatePassword'])->middleware('throttle:5,1,partner-password')->name('password.update');
     });

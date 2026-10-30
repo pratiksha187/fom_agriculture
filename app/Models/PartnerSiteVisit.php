@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PartnerSiteVisit extends Model
 {
-    public const STATUSES = ['requested' => 'Requested', 'scheduled' => 'Confirmed', 'completed' => 'Completed', 'cancelled' => 'Cancelled', 'missed' => 'Missed'];
+    public const STATUSES = ['requested' => 'Requested', 'scheduled' => 'Scheduled', 'completed' => 'Completed', 'cancelled' => 'Cancelled', 'missed' => 'Missed'];
 
     protected $fillable = ['scheduled_at', 'notes'];
 

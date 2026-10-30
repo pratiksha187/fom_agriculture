@@ -77,3 +77,15 @@ if (termsDialog && typeof termsDialog.showModal === 'function') {
     updateTermsStatus();
 }
 document.querySelector('.errors')?.focus();
+
+document.querySelectorAll('[data-lead-progress]').forEach(form => {
+    const visitField = form.querySelector('[data-progress-visit]');
+    const updateVisitField = () => {
+        const scheduled = form.elements.status.value === 'scheduled';
+        visitField.hidden = !scheduled;
+        form.elements.scheduled_at.disabled = !scheduled;
+        form.elements.scheduled_at.required = scheduled;
+    };
+    form.elements.status.addEventListener('change', updateVisitField);
+    updateVisitField();
+});
